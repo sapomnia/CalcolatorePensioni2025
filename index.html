@@ -157,7 +157,7 @@
             resultDiv.innerHTML = `
                 <p>Coefficiente di trasformazione: ${coefficiente}%</p>
                 <p>Pensione annua lorda: €${pensioneAnnua.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
-                <p>Pensione mensile lorda (13 mensilità): €${pensioneMensile.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                <p>Pensione mensile lorda (13 mensilità): <strong>€${pensioneMensile.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></p>
             `;
             
             resultDiv.classList.add('visible');
