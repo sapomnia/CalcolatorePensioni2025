@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .calculator {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+        }
+        
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        
+        .label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        
+        .input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f3f4f6;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .result.visible {
+            display: block;
+        }
+        
+        .note {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2 class="title">Calcola la tua pensione contributiva</h2>
+        
+        <div class="input-group">
+            <label class="label" for="montante">Montante contributivo (€)</label>
+            <input type="number" id="montante" class="input" placeholder="Inserisci il montante contributivo">
+        </div>
+        
+        <div class="input-group">
+            <label class="label" for="eta">Età al pensionamento</label>
+            <input type="number" id="eta" class="input" placeholder="Inserisci l'età (57-71)" min="57" max="71">
+        </div>
+        
+        <button class="button" onclick="calculatePension()">Calcola</button>
+        
+        <div id="result" class="result">
+            <p id="coefficiente"></p>
+            <p id="pensioneAnnua"></p>
+            <p id="pensioneMensile"></p>
+        </div>
+        
+        <p class="note">* Calcolo basato sui coefficienti di trasformazione ufficiali in vigore dal 1° gennaio 2025</p>
+    </div>
+
+    <script>
+        const coefficienti = {
+            57: 4.204,
+            58: 4.308,
+            59: 4.419,
+            60: 4.536,
+            61: 4.661,
+            62: 4.795,
+            63: 4.936,
+            64: 5.088,
+            65: 5.250,
+            66: 5.423,
+            67: 5.608,
+            68: 5.808,
+            69: 6.024,
+            70: 6.258,
+            71: 6.510
+        };
+
+        function calculatePension() {
+            const montante = parseFloat(document.getElementById('montante').value);
+            const eta = parseInt(document.getElementById('eta').value);
+            
+            if (isNaN(montante) || isNaN(eta) || eta < 57 || eta > 71) {
+                alert('Per favore, inserisci valori validi. L\'età deve essere tra 57 e 71 anni.');
+                return;
+            }
+            
+            const coefficiente = coefficienti[eta];
+            const pensioneAnnua = (montante * coefficiente) / 100;
+            const pensioneMensile = pensioneAnnua / 13;
+            
+            document.getElementById('coefficiente').textContent = 
+                `Coefficiente di trasformazione: ${coefficiente}%`;
+            document.getElementById('pensioneAnnua').textContent = 
+                `Pensione annua lorda: €${pensioneAnnua.toFixed(2)}`;
+            document.getElementById('pensioneMensile').textContent = 
+                `Pensione mensile lorda (13 mensilità): €${pensioneMensile.toFixed(2)}`;
+            
+            document.getElementById('result').classList.add('visible');
+        }
+    </script>
+</body>
+</html>
