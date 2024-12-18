@@ -2,36 +2,165 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Test Calcolatore</title>
+    <title>Calcolatore Pensione Contributiva</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.5;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .calculator {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 24px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 16px;
+            color: #1a1a1a;
+        }
+
+        .input:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+        }
+
+        .button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 16px;
+            background-color: #f8fafc;
+            border-radius: 4px;
+            display: none;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .result.visible {
+            display: block;
+        }
+
+        .note {
+            margin-top: 16px;
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+        }
+    </style>
 </head>
-<body style="font-family: Arial, sans-serif; max-width: 500px; margin: 20px auto; padding: 20px;">
-    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <h2 style="text-align: center;">Calcola la tua pensione contributiva</h2>
+<body>
+    <div class="calculator">
+        <h2 class="title">Calcola la tua pensione contributiva</h2>
         
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px;">Montante contributivo (€)</label>
-            <input type="number" id="montante" style="width: 100%; padding: 8px; box-sizing: border-box;">
+        <div class="input-group">
+            <label class="label" for="montante">Montante contributivo (€)</label>
+            <input type="number" id="montante" class="input" placeholder="Inserisci il montante contributivo" step="0.01">
         </div>
         
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px;">Età al pensionamento</label>
-            <input type="number" id="eta" style="width: 100%; padding: 8px; box-sizing: border-box;">
+        <div class="input-group">
+            <label class="label" for="eta">Età al pensionamento</label>
+            <input type="number" id="eta" class="input" placeholder="Inserisci l'età (57-71)" min="57" max="71">
         </div>
         
-        <button onclick="calcola()" style="width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;">
-            Calcola
-        </button>
+        <button class="button" onclick="calculatePension()">Calcola</button>
         
-        <div id="risultato" style="margin-top: 15px;"></div>
+        <div id="result" class="result"></div>
+        
+        <p class="note">* Calcolo basato sui coefficienti di trasformazione ufficiali in vigore dal 1° gennaio 2025</p>
     </div>
 
     <script>
-        function calcola() {
-            var montante = document.getElementById('montante').value;
-            var eta = document.getElementById('eta').value;
-            var risultato = document.getElementById('risultato');
+        const coefficienti = {
+            57: 4.204,
+            58: 4.308,
+            59: 4.419,
+            60: 4.536,
+            61: 4.661,
+            62: 4.795,
+            63: 4.936,
+            64: 5.088,
+            65: 5.250,
+            66: 5.423,
+            67: 5.608,
+            68: 5.808,
+            69: 6.024,
+            70: 6.258,
+            71: 6.510
+        };
+
+        function calculatePension() {
+            const montante = parseFloat(document.getElementById('montante').value);
+            const eta = parseInt(document.getElementById('eta').value);
+            const resultDiv = document.getElementById('result');
             
-            risultato.innerHTML = 'Test calcolo: Montante=' + montante + ', Età=' + eta;
+            if (isNaN(montante) || isNaN(eta) || eta < 57 || eta > 71) {
+                alert('Per favore, inserisci valori validi. L\'età deve essere tra 57 e 71 anni.');
+                return;
+            }
+            
+            const coefficiente = coefficienti[eta];
+            const pensioneAnnua = (montante * coefficiente) / 100;
+            const pensioneMensile = pensioneAnnua / 13;
+            
+            resultDiv.innerHTML = `
+                <p>Coefficiente di trasformazione: ${coefficiente}%</p>
+                <p>Pensione annua lorda: €${pensioneAnnua.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                <p>Pensione mensile lorda (13 mensilità): €${pensioneMensile.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+            `;
+            
+            resultDiv.classList.add('visible');
         }
     </script>
 </body>
