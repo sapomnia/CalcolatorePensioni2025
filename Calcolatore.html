@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calcolatore Pensione Contributiva</title>
+    <link href="https://fonts.cdnfonts.com/css/futura-pt" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -12,15 +12,17 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: "Futura PT", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.5;
             padding: 20px;
             background-color: #f5f5f5;
+            width: 590px;
+            height: 590px;
         }
 
         .calculator {
-            max-width: 500px;
-            margin: 0 auto;
+            width: 100%;
+            height: 100%;
             padding: 24px;
             background-color: white;
             border-radius: 8px;
@@ -54,18 +56,19 @@
             border-radius: 4px;
             font-size: 16px;
             color: #1a1a1a;
+            font-family: "Futura PT", sans-serif;
         }
 
         .input:focus {
-            border-color: #2563eb;
+            border-color: #DF2935;
             outline: none;
-            box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+            box-shadow: 0 0 0 2px rgba(223, 41, 53, 0.2);
         }
 
         .button {
             width: 100%;
             padding: 12px;
-            background-color: #2563eb;
+            background-color: #DF2935;
             color: white;
             border: none;
             border-radius: 4px;
@@ -73,10 +76,11 @@
             font-weight: 500;
             cursor: pointer;
             transition: background-color 0.2s;
+            font-family: "Futura PT", sans-serif;
         }
 
         .button:hover {
-            background-color: #1d4ed8;
+            background-color: #c62430;
         }
 
         .result {
@@ -85,19 +89,12 @@
             background-color: #f8fafc;
             border-radius: 4px;
             display: none;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         .result.visible {
             display: block;
-        }
-
-        .result p {
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .result p:last-child {
-            margin-bottom: 0;
         }
 
         .note {
@@ -114,7 +111,7 @@
         
         <div class="input-group">
             <label class="label" for="montante">Montante contributivo (€)</label>
-            <input type="number" id="montante" class="input" placeholder="Inserisci il montante contributivo">
+            <input type="number" id="montante" class="input" placeholder="Inserisci il montante contributivo" step="0.01">
         </div>
         
         <div class="input-group">
@@ -124,11 +121,7 @@
         
         <button class="button" onclick="calculatePension()">Calcola</button>
         
-        <div id="result" class="result">
-            <p id="coefficiente"></p>
-            <p id="pensioneAnnua"></p>
-            <p id="pensioneMensile"></p>
-        </div>
+        <div id="result" class="result"></div>
         
         <p class="note">* Calcolo basato sui coefficienti di trasformazione ufficiali in vigore dal 1° gennaio 2025</p>
     </div>
@@ -155,6 +148,7 @@
         function calculatePension() {
             const montante = parseFloat(document.getElementById('montante').value);
             const eta = parseInt(document.getElementById('eta').value);
+            const resultDiv = document.getElementById('result');
             
             if (isNaN(montante) || isNaN(eta) || eta < 57 || eta > 71) {
                 alert('Per favore, inserisci valori validi. L\'età deve essere tra 57 e 71 anni.');
@@ -165,14 +159,13 @@
             const pensioneAnnua = (montante * coefficiente) / 100;
             const pensioneMensile = pensioneAnnua / 13;
             
-            document.getElementById('coefficiente').textContent = 
-                `Coefficiente di trasformazione: ${coefficiente}%`;
-            document.getElementById('pensioneAnnua').textContent = 
-                `Pensione annua lorda: €${pensioneAnnua.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('pensioneMensile').textContent = 
-                `Pensione mensile lorda (13 mensilità): €${pensioneMensile.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            resultDiv.innerHTML = `
+                <p>Coefficiente di trasformazione: ${coefficiente}%</p>
+                <p>Pensione annua lorda: €${pensioneAnnua.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                <p>Pensione mensile lorda (13 mensilità): <strong>€${pensioneMensile.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></p>
+            `;
             
-            document.getElementById('result').classList.add('visible');
+            resultDiv.classList.add('visible');
         }
     </script>
 </body>
